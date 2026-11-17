@@ -13,15 +13,15 @@ a patched fork. It is an assembly, not a rewrite: the upstreams are forks tracke
 
 ## Status
 
-The repository holds the upstream registry, the tools that apply it, and the first unit: `aysh-pty`, a program on a
-pseudo-terminal with its screen. The shell binary is not built yet.
+The repository holds the upstream registry, the tools that apply it, and two units: `aysh`, the shell (GNU Bash 5.3
+through rubash, with the niubash interactive host), and `aysh-pty`, a program on a pseudo-terminal with its screen.
 
 | Part | Upstream | State |
 | :-- | :-- | :-- |
-| Bash 5.3 engine | [rubash](https://github.com/unixwin/rubash) | fork tracked |
-| Interactive host | [niubash](https://github.com/unixwin/niubash), [ruline](https://github.com/unixwin/ruline) | forks tracked |
+| Bash 5.3 engine | [rubash](https://github.com/unixwin/rubash) | `crates/aysh`, built from the fork |
+| Interactive host | [niubash](https://github.com/unixwin/niubash), [ruline](https://github.com/unixwin/ruline) | `crates/aysh`, built from the forks (launcher exposed as a library) |
 | PTY and VT core | [rio](https://github.com/raphamorim/rio) (`rio-vt`, `teletypewriter`) | `crates/aysh-pty`, built from the fork |
-| Multiplexer | [psmux](https://github.com/psmux/psmux) on Windows, [tmux-rs](https://github.com/richardscollin/tmux-rs) on Unix | forks tracked |
+| Multiplexer | [psmux](https://github.com/psmux/psmux), ported to Unix in the fork | fork patched, not vendored yet |
 | Terminal tests | [tui-test](https://github.com/microsoft/tui-test) | fork tracked |
 | Agent | [fx](https://github.com/vercel-labs/fx) | fork tracked |
 | Web terminal | [wterm](https://github.com/vercel-labs/wterm), [just-bash](https://github.com/vercel-labs/just-bash) | forks tracked |

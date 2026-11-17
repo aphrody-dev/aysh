@@ -19,3 +19,19 @@ unused_must_use = "deny"
 dbg_macro = "deny"
 todo = "deny"
 unimplemented = "deny"
+
+# niubash names its siblings by git URL; the forks vendored here replace them, so one copy of each is built.
+[patch."https://github.com/unixwin/rubash.git"]
+rubash = { path = "third_party/unixwin/rubash" }
+
+[patch."https://github.com/unixwin/ruline"]
+readline-abi = { path = "third_party/unixwin/ruline/readline-abi" }
+
+[patch.crates-io]
+reedline = { path = "third_party/unixwin/ruline" }
+
+# niubash is built to abort on panic (its release profile); keep the same contract.
+[profile.release]
+panic = "abort"
+lto = "thin"
+codegen-units = 1

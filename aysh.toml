@@ -36,18 +36,24 @@ work = "/srv/xbuild/aysh"
 name = "rubash"
 upstream = "unixwin/rubash"
 branch = "master"
+path = "third_party/unixwin/rubash"
+mode = "source"
 role = "GNU Bash 5.3 engine as a library (rubash::api::Session); replaces GNU bash, which is never linked"
 
 [[upstream]]
 name = "niubash"
 upstream = "unixwin/niubash"
 branch = "master"
+path = "third_party/unixwin/niubash"
+mode = "source"
 siblings = ["rubash", "ruline"]
 role = "interactive host: REPL, prompt, plugins, completion (niubash-runtime); depends on ../rubash and ../ruline"
 
 [[upstream]]
 name = "ruline"
 upstream = "unixwin/ruline"
+path = "third_party/unixwin/ruline"
+mode = "source"
 role = "GNU readline-compatible line editor and readline C ABI"
 
 [[upstream]]
