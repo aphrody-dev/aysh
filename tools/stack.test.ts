@@ -14,16 +14,20 @@ test("the repository's own registry is valid", async () => {
   expect(reg.upstream.length).toBeGreaterThan(0);
 });
 
-test("niubash, rubash and ruline are vendored as siblings, as niubash's path dependencies require", async () => {
-  const reg = await load();
-  const dir = (name: string) => reg.upstream.find(u => u.name === name)?.path?.replace(/\/[^/]+$/, "");
-  const parent = dir("niubash");
-  expect(parent).toBeDefined();
-  expect(dir("rubash")).toBe(parent);
-  expect(dir("ruline")).toBe(parent);
-  for (const name of ["niubash", "rubash", "ruline"]) {
-    expect(reg.upstream.find(u => u.name === name)?.path?.endsWith(`/${name}`)).toBe(true);
-  }
+test("a fork that reaches others through relative paths is vendored beside them", () => {
+  const trio = (rubash: string | undefined) =>
+    base([
+      { name: "niubash", upstream: "unixwin/niubash", role: "host", path: "third_party/unixwin/niubash", mode: "source", siblings: ["rubash", "ruline"] },
+      { name: "rubash", upstream: "unixwin/rubash", role: "engine", ...(rubash ? { path: rubash, mode: "source" as const } : {}) },
+      { name: "ruline", upstream: "unixwin/ruline", role: "editor", path: "third_party/unixwin/ruline", mode: "source" },
+    ]);
+  expect(problems(trio("third_party/unixwin/rubash"))).toEqual([]);
+  expect(problems(trio("third_party/rubash"))).toEqual(["niubash: sibling rubash is not vendored at third_party/unixwin/rubash"]);
+  expect(problems(trio(undefined))).toEqual(["niubash: sibling rubash is not vendored at third_party/unixwin/rubash"]);
+});
+
+test("siblings are not required while the fork itself is only tracked", () => {
+  expect(problems(base([{ name: "niubash", upstream: "unixwin/niubash", role: "host", siblings: ["rubash"] }, { name: "rubash", upstream: "unixwin/rubash", role: "engine" }]))).toEqual([]);
 });
 
 test("problems reports duplicates, bad slugs, bad paths and modes", () => {

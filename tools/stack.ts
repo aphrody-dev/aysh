@@ -19,9 +19,11 @@ export interface Upstream {
   name: string;
   upstream: string;
   branch?: string;
+  base?: string;
   path?: string;
   mode?: Mode;
   mirror?: boolean;
+  siblings?: string[];
   role: string;
 }
 
@@ -66,6 +68,11 @@ export function problems(reg: Registry): string[] {
     }
     if (paths.has(u.path)) out.push(`${u.name}: path ${u.path} used twice`);
     paths.add(u.path);
+    const parent = u.path.replace(/\/?[^/]+$/, "");
+    for (const name of u.siblings ?? []) {
+      const want = parent ? `${parent}/${name}` : name;
+      if (reg.upstream.find(o => o.name === name)?.path !== want) out.push(`${u.name}: sibling ${name} is not vendored at ${want}`);
+    }
   }
   for (const r of reg.reference ?? []) {
     if (!SLUG.test(r.upstream)) out.push(`reference "${r.upstream}" is not owner/repo`);
@@ -171,7 +178,7 @@ async function rows(reg: Registry): Promise<Row[]> {
       let ahead: number | null = null;
       let behind: number | null = null;
       if (!u.mirror) {
-        const cmp = await sh(["gh", "api", `repos/${u.upstream}/compare/${branch}...${reg.product.forks}:${u.name}:${branch}`, "--jq", "[.ahead_by, .behind_by] | @tsv"]);
+        const cmp = await sh(["gh", "api", `repos/${u.upstream}/compare/${u.base ?? branch}...${reg.product.forks}:${u.name}:${branch}`, "--jq", "[.ahead_by, .behind_by] | @tsv"]);
         [ahead, behind] = cmp.split("\t").map(Number) as [number, number];
       }
       return { name: u.name, branch, ahead, behind, tip, gitlink: u.path ? (links.get(u.path) ?? "") : null };
@@ -200,10 +207,10 @@ async function forks(reg: Registry): Promise<void> {
           console.log(`${slug}: forked from ${u.upstream}`);
         }
         const branch = await branchOf(u);
-        const cmp = await sh(["gh", "api", `repos/${u.upstream}/compare/${branch}...${reg.product.forks}:${u.name}:${branch}`, "--jq", "[.ahead_by, .behind_by] | @tsv"]);
+        const cmp = await sh(["gh", "api", `repos/${u.upstream}/compare/${u.base ?? branch}...${reg.product.forks}:${u.name}:${branch}`, "--jq", "[.ahead_by, .behind_by] | @tsv"]);
         const [ahead, behind] = cmp.split("\t").map(Number) as [number, number];
         if (behind === 0) console.log(`${slug}: up to date`);
-        else if (ahead > 0) console.log(`${slug}: diverged (${ahead} ahead, ${behind} behind); merge ${u.upstream} ${branch} on the build host`);
+        else if (ahead > 0 || u.base) console.log(`${slug}: diverged (${ahead} ahead, ${behind} behind); merge ${u.upstream} ${u.base ?? branch} on the build host`);
         else {
           await sh(["gh", "repo", "sync", slug, "--source", u.upstream, "--branch", branch]);
           console.log(`${slug}: fast-forwarded ${behind} commits`);

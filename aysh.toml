@@ -21,8 +21,12 @@ work = "/srv/xbuild/aysh"
 #   name      fork repository name
 #   upstream  owner/repo the fork follows
 #   branch    branch followed (default: the upstream's default branch, read live)
+#   base      upstream ref the fork branch is compared against, when the fork follows a release line instead of the
+#             upstream branch of the same name (default: `branch`)
 #   path      set only when the fork is vendored here as a submodule; absent = tracked, consumed from a registry or later
 #   mode      "source" (checked out and built) or "corpus" (gitlink only; checked out on the test host)
+#   siblings  forks that must be vendored in the same directory as this one, each under its own name, because this
+#             fork reaches them through relative paths
 #   mirror    true when the repository under `forks` is a plain mirror, not a GitHub fork (no ahead/behind through the API)
 #   role      why aysh needs it
 # `bun tools/stack.ts` applies this table; nothing else lists forks or submodules.
@@ -32,23 +36,18 @@ work = "/srv/xbuild/aysh"
 name = "rubash"
 upstream = "unixwin/rubash"
 branch = "master"
-path = "third_party/unixwin/rubash"
-mode = "source"
 role = "GNU Bash 5.3 engine as a library (rubash::api::Session); replaces GNU bash, which is never linked"
 
 [[upstream]]
 name = "niubash"
 upstream = "unixwin/niubash"
 branch = "master"
-path = "third_party/unixwin/niubash"
-mode = "source"
+siblings = ["rubash", "ruline"]
 role = "interactive host: REPL, prompt, plugins, completion (niubash-runtime); depends on ../rubash and ../ruline"
 
 [[upstream]]
 name = "ruline"
 upstream = "unixwin/ruline"
-path = "third_party/unixwin/ruline"
-mode = "source"
 role = "GNU readline-compatible line editor and readline C ABI"
 
 [[upstream]]
@@ -59,7 +58,11 @@ role = "native Unix applets for Windows, consumed as a released binary"
 [[upstream]]
 name = "rio"
 upstream = "raphamorim/rio"
-role = "rio-vt (headless VT core) and teletypewriter (PTY, ConPTY) from crates.io; Rio is the GPU front end"
+branch = "v0.5"              # the 0.5 release line plus raphamorim/rio#2061 (exit status lost to EIO on Linux)
+base = "v0.5.32"
+path = "third_party/rio"
+mode = "source"
+role = "rio-vt (headless VT core) and teletypewriter (PTY, ConPTY), built from the fork; Rio is the GPU front end"
 
 [[upstream]]
 name = "psmux"
