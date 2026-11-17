@@ -1,0 +1,9 @@
+{
+  "name": "aysh",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "stack": "bun tools/stack.ts",
+    "test": "bun test"
+  }
+}

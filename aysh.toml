@@ -1,0 +1,128 @@
+# The only identity and upstream registry of this repository. Tools, CI and docs read names from here.
+
+[product]
+name = "aysh"
+display = "aysh"
+owner = "aphrody-dev"        # GitHub account that owns this repository
+forks = "aphrody-labs"       # organization holding the forks of every upstream
+cli = "aysh"
+license = "Apache-2.0"
+
+# Hosts by role; values are ssh Host aliases resolved by `ssh -G <alias>`.
+[hosts]
+build = "fr1"                # heavy builds and fork merges
+test = "fr2"                 # conformance corpora and oracles (GNU bash, tmux)
+
+[paths.build]
+work = "/srv/xbuild/aysh"
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Upstreams. Every entry is a fork under [product].forks, tracked against `upstream` on `branch`.
+#   name      fork repository name
+#   upstream  owner/repo the fork follows
+#   branch    branch followed (default: the upstream's default branch, read live)
+#   path      set only when the fork is vendored here as a submodule; absent = tracked, consumed from a registry or later
+#   mode      "source" (checked out and built) or "corpus" (gitlink only; checked out on the test host)
+#   mirror    true when the repository under `forks` is a plain mirror, not a GitHub fork (no ahead/behind through the API)
+#   role      why aysh needs it
+# `bun tools/stack.ts` applies this table; nothing else lists forks or submodules.
+# ---------------------------------------------------------------------------------------------------------------------
+
+[[upstream]]
+name = "rubash"
+upstream = "unixwin/rubash"
+branch = "master"
+path = "third_party/unixwin/rubash"
+mode = "source"
+role = "GNU Bash 5.3 engine as a library (rubash::api::Session); replaces GNU bash, which is never linked"
+
+[[upstream]]
+name = "niubash"
+upstream = "unixwin/niubash"
+branch = "master"
+path = "third_party/unixwin/niubash"
+mode = "source"
+role = "interactive host: REPL, prompt, plugins, completion (niubash-runtime); depends on ../rubash and ../ruline"
+
+[[upstream]]
+name = "ruline"
+upstream = "unixwin/ruline"
+path = "third_party/unixwin/ruline"
+mode = "source"
+role = "GNU readline-compatible line editor and readline C ABI"
+
+[[upstream]]
+name = "WinuxCmd"
+upstream = "unixwin/WinuxCmd"
+role = "native Unix applets for Windows, consumed as a released binary"
+
+[[upstream]]
+name = "rio"
+upstream = "raphamorim/rio"
+role = "rio-vt (headless VT core) and teletypewriter (PTY, ConPTY) from crates.io; Rio is the GPU front end"
+
+[[upstream]]
+name = "psmux"
+upstream = "psmux/psmux"
+role = "tmux absorbed on Windows: tmux command language, .tmux.conf and control mode in Rust"
+
+[[upstream]]
+name = "tmux-rs"
+upstream = "richardscollin/tmux-rs"
+role = "tmux absorbed on Unix: Rust port of tmux"
+
+[[upstream]]
+name = "tui-test"
+upstream = "microsoft/tui-test"
+role = "terminal tests and tapes (tui-test-rs with the rio feature: same VT core as aysh)"
+
+[[upstream]]
+name = "fx"
+upstream = "vercel-labs/fx"
+role = "coding agent; fork patched for an aysh shell kind and Windows"
+
+[[upstream]]
+name = "wterm"
+upstream = "vercel-labs/wterm"
+role = "browser terminal (@wterm/dom) for the web front end"
+
+[[upstream]]
+name = "just-bash"
+upstream = "vercel-labs/just-bash"
+role = "in-browser sandbox shell and the Oils spec corpus it carries"
+
+[[upstream]]
+name = "PowerShell"
+upstream = "PowerShell/PowerShell"
+role = "interop target, run as a pwsh subprocess; never linked"
+
+[[upstream]]
+name = "bash"
+upstream = "https://git.savannah.gnu.org/git/bash.git"
+branch = "master"
+mirror = true
+role = "GNU bash 5.3: conformance corpus (tests/) and reference oracle only; GPL, never linked"
+
+# ---------------------------------------------------------------------------------------------------------------------
+# References: upstreams used without a fork (a registry package, an installed CLI, an oracle or a specification).
+# ---------------------------------------------------------------------------------------------------------------------
+
+[[reference]]
+upstream = "clap-rs/clap"
+role = "CLI parser, completion scripts, man pages, and the COMPLETE= dynamic completion protocol aysh consumes"
+
+[[reference]]
+upstream = "casey/just"
+role = "task runner; aysh is its shell and windows-shell"
+
+[[reference]]
+upstream = "tmux/tmux"
+role = "behavioral oracle for the mux, run on the test host; never linked"
+
+[[reference]]
+upstream = "OpenHands/software-agent-sdk"
+role = "TerminalAction / TerminalObservation schema and PS1 JSON metadata implemented natively by the agent surface"
+
+[[reference]]
+upstream = "charmbracelet/vhs"
+role = "tape format reference; recordings are produced by tui-test tapes instead"

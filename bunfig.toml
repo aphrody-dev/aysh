@@ -1,0 +1,3 @@
+[test]
+# Submodules carry their own test suites; they are run from their own trees, never from here.
+pathIgnorePatterns = ["third_party/**", "target/**"]
