@@ -1,0 +1,7 @@
+# Names of this repository, checked by the Aphrody naming scheme (aphrody-labs/.github, naming/NAMING.md).
+id = "aysh"
+kind = "tool"
+org = "aphrody-dev"
+
+[exceptions]
+I004 = "the fork branch is the tracking line that tools/stack.ts pins into the gitlink; the commit, not the branch, decides the tree"
