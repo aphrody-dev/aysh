@@ -37,7 +37,20 @@ bun tools/stack.ts modules   # write .gitmodules and add missing submodules
 bun tools/stack.ts pin       # move every gitlink to its fork's tip
 
 bun tools/remote.ts build cargo test --workspace --locked   # run a command on the build host against this tree
+
+bun tools/shells.ts          # install the shell and terminal configuration of config/ on this machine
+bun tools/shells.ts --check  # report every difference (exit 1)
 ```
+
+## Shell configuration
+
+`config/` is the configuration of the shells and terminal tools (bash family and PowerShell profiles, starship, atuin,
+yazi, helix, lazygit, ...); `tools/shells.ts` installs it. `config/env.toml` is the single source of the environment: the
+installer generates `env.sh` and `env.ps1` from it into the shell cache directory, with the workspace root (`SRC_ROOT`,
+the parent of this checkout) derived at that moment. The `~/.bashrc`, `~/.bash_profile` and `~/.niubashrc` stubs source
+`config/bash` from this checkout; PowerShell profiles, starship and the other tool configs are copies. A tool that is not
+on PATH gets no file, and the git, bun and `ay` completions are taken from the installed tools. `config/links.toml` lists
+what goes where.
 
 ## Development
 

@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "stack": "bun tools/stack.ts",
+    "shells": "bun tools/shells.ts",
     "test": "bun test"
   }
 }
