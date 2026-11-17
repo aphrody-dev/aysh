@@ -125,7 +125,10 @@ if [[ -z ${BRUSH_VERSION-} ]]; then
   _ay_c=$AY_SHELL_CACHE/bash-starship.bash
   if [[ ! -s $_ay_c ]] && command -v starship >/dev/null; then
     [[ -d $AY_SHELL_CACHE ]] || mkdir -p "$AY_SHELL_CACHE"
-    starship init bash --print-full-init >"$_ay_c" 2>/dev/null
+    # niubash 1.5.0 reads STARSHIP_START_TIME as 0 in a bare-name arithmetic (`$((END - START))`) once PS0 has set it,
+    # so every prompt showed the epoch as the command duration; expanding the values works.
+    starship init bash --print-full-init 2>/dev/null |
+      sed 's|STARSHIP_DURATION=\$((STARSHIP_END_TIME - STARSHIP_START_TIME))|STARSHIP_DURATION=$((${STARSHIP_END_TIME} - ${STARSHIP_START_TIME}))|' >"$_ay_c"
   fi
   [[ -s $_ay_c ]] && . "$_ay_c"
   _ay_c=$AY_SHELL_CACHE/bash-atuin.bash
