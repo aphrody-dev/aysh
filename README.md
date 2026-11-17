@@ -13,13 +13,14 @@ a patched fork. It is an assembly, not a rewrite: the upstreams are forks tracke
 
 ## Status
 
-The repository currently holds the upstream registry and the tool that applies it. The shell binary is not built yet.
+The repository holds the upstream registry, the tools that apply it, and the first unit: `aysh-pty`, a program on a
+pseudo-terminal with its screen. The shell binary is not built yet.
 
 | Part | Upstream | State |
 | :-- | :-- | :-- |
 | Bash 5.3 engine | [rubash](https://github.com/unixwin/rubash) | fork tracked |
 | Interactive host | [niubash](https://github.com/unixwin/niubash), [ruline](https://github.com/unixwin/ruline) | forks tracked |
-| PTY and VT core | [rio](https://github.com/raphamorim/rio) (`rio-vt`, `teletypewriter`) | fork tracked |
+| PTY and VT core | [rio](https://github.com/raphamorim/rio) (`rio-vt`, `teletypewriter`) | `crates/aysh-pty`, built from the fork |
 | Multiplexer | [psmux](https://github.com/psmux/psmux) on Windows, [tmux-rs](https://github.com/richardscollin/tmux-rs) on Unix | forks tracked |
 | Terminal tests | [tui-test](https://github.com/microsoft/tui-test) | fork tracked |
 | Agent | [fx](https://github.com/vercel-labs/fx) | fork tracked |
@@ -34,13 +35,18 @@ bun tools/stack.ts status    # forks against their upstreams, gitlinks against t
 bun tools/stack.ts forks     # create missing forks, fast-forward the ones without commits of their own
 bun tools/stack.ts modules   # write .gitmodules and add missing submodules
 bun tools/stack.ts pin       # move every gitlink to its fork's tip
+
+bun tools/remote.ts build cargo test --workspace --locked   # run a command on the build host against this tree
 ```
 
 ## Development
 
 ```sh
 bun test
+bun tools/remote.ts build cargo test --workspace --locked
 ```
+
+Rust builds run on the build host named in `aysh.toml`, never on a workstation.
 
 Agent and contributor rules are in [AGENTS.md](AGENTS.md). Contributions follow the [organization guide](https://github.com/aphrody-labs/.github/blob/main/CONTRIBUTING.md). Report vulnerabilities as described in the [security policy](https://github.com/aphrody-labs/.github/blob/main/SECURITY.md).
 

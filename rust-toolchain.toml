@@ -1,0 +1,4 @@
+# rio-vt enables parking_lot's `nightly` feature, so a nightly is required; one dated toolchain everywhere.
+[toolchain]
+channel = "nightly-2026-11-14"
+components = ["rustfmt", "clippy"]

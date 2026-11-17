@@ -29,4 +29,5 @@ Contract for every agent working in aysh. Names, hosts and upstreams come from `
 ```sh
 bun test                    # tools
 bun tools/stack.ts status   # forks against their upstreams, gitlinks against their forks; exits 1 on drift
+bun tools/remote.ts build sh -c 'cargo fmt --all --check && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked'
 ```
